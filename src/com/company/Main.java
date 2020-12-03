@@ -1,9 +1,7 @@
 package com.company;
 
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.io.FileInputStream;
+import java.security.*;
 import java.util.Scanner;
 
 public class Main {
@@ -12,6 +10,7 @@ public class Main {
 
         String keystorePath = "/home/dam2a/.keystore";
         String keystorePassword = "123Dam456";
+        char[] passwordChar = keystorePassword.toCharArray();
 
         Scanner input = new Scanner(System.in);
 
