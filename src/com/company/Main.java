@@ -1,7 +1,11 @@
 package com.company;
 
+import javax.crypto.SecretKey;
 import java.io.FileInputStream;
 import java.security.*;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.Enumeration;
 import java.util.Scanner;
 
 public class Main {
@@ -47,6 +51,40 @@ public class Main {
         System.out.println("Algoritmo cifrado de la clave: "+Cifrar.loadKeyStore(keystorePath,keystorePassword).getCertificate("lamevaclaum9").getPublicKey().getAlgorithm());
 
         // 2.ii
+        SecretKey claveSimetrica = Cifrar.keygenKeyGeneration(128);
+        KeyStore.SecretKeyEntry skEntry = new KeyStore.SecretKeyEntry(claveSimetrica);
+        KeyStore.ProtectionParameter protParam = new KeyStore.PasswordProtection(keystorePassword.toCharArray());
+        KeyStore ks = Cifrar.loadKeyStore(keystorePath, keystorePassword);
+        ks.setEntry("nuevaKey", skEntry, protParam);
+
+        java.io.FileOutputStream fos = null;
+        try {
+            fos = new java.io.FileOutputStream("newKeyStoreName");
+            ks.store(fos, passwordChar);
+        } finally {
+            if (fos != null) {
+                fos.close();
+            }
+        }
+        Enumeration<String> aliases = ks.aliases();
+        System.out.print("Alias de las claves: ");
+        while(aliases.hasMoreElements()){
+            System.out.print(aliases.nextElement()+"  ");
+        }
+        // 3
+        System.out.println(Cifrar.getPublicKey("/home/dam2a/Baixades/download/A3/jordi.cer"));
+
+        // 4
+        Cifrar.getPublicKey(Cifrar.)
+        // 5
+        byte[] texto ="prueba".getBytes();
+        byte[] firma = Cifrar.signData(texto,privateKey);
+        System.out.println("Firma :"+ firma);
+
+        // 6
+        System.out.println("Validez: "+Cifrar.validateSignature(texto, firma, publicKey));
+
+        // 2.2
 
     }
 }
