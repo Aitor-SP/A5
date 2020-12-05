@@ -77,7 +77,7 @@ public class Cifrar {
     }
 
     public static PublicKey getPublicKey(String fitxer) throws CertificateException, FileNotFoundException {
-        FileInputStream fin = new FileInputStream("/home/dam2a/Baixades/download/A3/jordi.cer");
+        FileInputStream fin = new FileInputStream("D:\\Usuarios\\Aitor\\Documents\\DAM\\2 DAM\\M03 - Programació bàsica\\PROYECTOS\\A5\\src\\com\\company\\jordi.cer");
         CertificateFactory f = CertificateFactory.getInstance("X.509");
         X509Certificate certificate = (X509Certificate)f.generateCertificate(fin);
         PublicKey pk = certificate.getPublicKey();
@@ -85,8 +85,12 @@ public class Cifrar {
     }
 
     // 4
-    public static PublicKey getPublicKey(KeyStore ks, String alias, String pwMyKey) {
-
+    public static PublicKey getPublicKey(KeyStore ks, String alias, String pwMyKey) throws FileNotFoundException, CertificateException {
+        FileInputStream fin = new FileInputStream("D:\\Usuarios\\Aitor\\Documents\\DAM\\2 DAM\\M03 - Programació bàsica\\PROYECTOS\\A5\\src\\com\\company\\jordi.cer");
+        CertificateFactory f = CertificateFactory.getInstance("X.509");
+        X509Certificate certificate = (X509Certificate)f.generateCertificate(fin);
+        PublicKey pk = certificate.getPublicKey();
+        return pk;
     }
 
     // 5

@@ -2,6 +2,7 @@ package com.company;
 
 import javax.crypto.SecretKey;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -12,7 +13,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        String keystorePath = "/home/dam2a/.keystore";
+        String keystorePath = "D:\\Usuarios\\Aitor\\Documents\\DAM\\2 DAM\\M03 - Programació bàsica\\PROYECTOS\\A5\\src\\com\\company\\.keystore";
         String keystorePassword = "123Dam456";
         char[] passwordChar = keystorePassword.toCharArray();
 
@@ -23,8 +24,7 @@ public class Main {
         PublicKey publicKey = keypair.getPublic();
         PrivateKey privateKey = keypair.getPrivate();
 
-
-        /*/System.out.print("Introduzca el texto a cifrar: ");
+        System.out.print("Introduzca el texto a cifrar: ");
         String texto = input.nextLine();
         byte[] prueba = texto.getBytes();
 
@@ -32,7 +32,7 @@ public class Main {
         System.out.println(cifrar);
 
         byte[] descifrar = Cifrar.decryptData(cifrar, privateKey);
-        System.out.println(new String(descifrar));/*/
+        System.out.println("Texto descifrado: "+new String(descifrar));
 
         // 2
         // 2.1
@@ -66,25 +66,38 @@ public class Main {
                 fos.close();
             }
         }
+
         Enumeration<String> aliases = ks.aliases();
         System.out.print("Alias de las claves: ");
         while(aliases.hasMoreElements()){
             System.out.print(aliases.nextElement()+"  ");
         }
+
         // 3
-        System.out.println(Cifrar.getPublicKey("/home/dam2a/Baixades/download/A3/jordi.cer"));
+        System.out.println(Cifrar.getPublicKey("D:\\Usuarios\\Aitor\\Documents\\DAM\\2 DAM\\M03 - Programació bàsica\\PROYECTOS\\A5\\src\\com\\company\\jordi.cer"));
 
         // 4
-        Cifrar.getPublicKey(Cifrar.)
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        try(InputStream keyStoreData = new FileInputStream(keystorePath)){
+            keyStore.load(keyStoreData, passwordChar);
+        }
+        System.out.println(Cifrar.getPublicKey(keyStore,"lamevaclaum9",keystorePassword));
+
         // 5
-        byte[] texto ="prueba".getBytes();
-        byte[] firma = Cifrar.signData(texto,privateKey);
-        System.out.println("Firma :"+ firma);
+        byte[] texto1 ="prueba".getBytes();
+        System.out.println("Firma :"+ new String(Cifrar.signData(texto1,privateKey)));
 
         // 6
-        System.out.println("Validez: "+Cifrar.validateSignature(texto, firma, publicKey));
+        byte[] firma = Cifrar.signData(texto1,privateKey);
+        System.out.println("Validez: "+Cifrar.validateSignature(texto1, firma, publicKey));
 
         // 2.2
+        String texto2 = "final";
+        byte[] data = texto2.getBytes();
+
+        byte[][] cifrado = Cifrar.encryptWrappedData(data,publicKey);
+        System.out.println("Texto cifrado :"+cifrado);
+
 
     }
 }
