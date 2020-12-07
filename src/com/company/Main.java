@@ -1,11 +1,14 @@
 package com.company;
 
+import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Scanner;
 
@@ -16,6 +19,7 @@ public class Main {
         String keystorePath = "D:\\Usuarios\\Aitor\\Documents\\DAM\\2 DAM\\M03 - Programació bàsica\\PROYECTOS\\A5\\src\\com\\company\\.keystore";
         String keystorePassword = "123Dam456";
         char[] passwordChar = keystorePassword.toCharArray();
+        String cerPath = "D:\\Usuarios\\Aitor\\Documents\\DAM\\2 DAM\\M03 - Programació bàsica\\PROYECTOS\\A5\\src\\com\\company\\jordi.cer";
 
         Scanner input = new Scanner(System.in);
 
@@ -74,7 +78,7 @@ public class Main {
         }
 
         // 3
-        System.out.println(Cifrar.getPublicKey("D:\\Usuarios\\Aitor\\Documents\\DAM\\2 DAM\\M03 - Programació bàsica\\PROYECTOS\\A5\\src\\com\\company\\jordi.cer"));
+        System.out.println(Cifrar.getPublicKey(cerPath));
 
         // 4
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -99,5 +103,6 @@ public class Main {
         System.out.println("Texto cifrado :"+cifrado);
 
 
+        System.out.println("Texto descifrado :" + new String(Cifrar.decryptWrappedData(cifrado,privateKey)));
     }
 }

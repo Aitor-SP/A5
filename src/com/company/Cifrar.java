@@ -2,6 +2,7 @@ package com.company;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,7 +47,7 @@ public class Cifrar {
             cipher.init(Cipher.DECRYPT_MODE, pub);
             decryptData =  cipher.doFinal(data);
         } catch (Exception  ex) {
-            System.err.println("Error xifrant: " + ex);
+            System.err.println("Error desxifrant: " + ex);
         }
         return decryptData;
     }
@@ -77,7 +78,7 @@ public class Cifrar {
     }
 
     public static PublicKey getPublicKey(String fitxer) throws CertificateException, FileNotFoundException {
-        FileInputStream fin = new FileInputStream("D:\\Usuarios\\Aitor\\Documents\\DAM\\2 DAM\\M03 - Programació bàsica\\PROYECTOS\\A5\\src\\com\\company\\jordi.cer");
+        FileInputStream fin = new FileInputStream(fitxer);
         CertificateFactory f = CertificateFactory.getInstance("X.509");
         X509Certificate certificate = (X509Certificate)f.generateCertificate(fin);
         PublicKey pk = certificate.getPublicKey();
@@ -85,7 +86,7 @@ public class Cifrar {
     }
 
     // 4
-    public static PublicKey getPublicKey(KeyStore ks, String alias, String pwMyKey) throws FileNotFoundException, CertificateException {
+    public static PublicKey getPublicKey(KeyStore ks, String alias, String pwMyKey) throws IOException, CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
         FileInputStream fin = new FileInputStream("D:\\Usuarios\\Aitor\\Documents\\DAM\\2 DAM\\M03 - Programació bàsica\\PROYECTOS\\A5\\src\\com\\company\\jordi.cer");
         CertificateFactory f = CertificateFactory.getInstance("X.509");
         X509Certificate certificate = (X509Certificate)f.generateCertificate(fin);
@@ -124,39 +125,46 @@ public class Cifrar {
     public static byte[][] encryptWrappedData(byte[] data, PublicKey pub) {
         byte[][] encWrappedData = new byte[2][];
         try {
+            // Generamos la clave con el algoritmo AES
             KeyGenerator kgen = KeyGenerator.getInstance("AES");
             kgen.init(128);
             SecretKey sKey = kgen.generateKey();
+
+            // Ciframos el mensaje a partir de la clave AES anterior
             Cipher cipher = Cipher.getInstance("AES");
             cipher.init(Cipher.ENCRYPT_MODE, sKey);
             byte[] encMsg = cipher.doFinal(data);
+
+            // Ciframos y envolvemos con el algoritmo de cifrado simetrico (RSA)
             cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.WRAP_MODE, pub);
             byte[] encKey = cipher.wrap(sKey);
             encWrappedData[0] = encMsg;
             encWrappedData[1] = encKey;
+
         } catch (Exception  ex) {
             System.err.println("Ha succeït un error xifrant: " + ex);
         }
         return encWrappedData;
     }
-    public static byte[][] decryptWrappedData(byte[] data, PublicKey pub) {
-        byte[][] decWrappedData = new byte[2][];
+
+    public static byte[] decryptWrappedData(byte[][] data, PrivateKey priv) {
+        byte[] msgDes = null;
+        byte[] encMsg = data[0];
         try {
-            KeyGenerator kgen = KeyGenerator.getInstance("AES");
-            kgen.init(128);
-            SecretKey sKey = kgen.generateKey();
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, sKey);
-            byte[] encMsg = cipher.doFinal(data);
-            cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            cipher.init(Cipher.UNWRAP_MODE, pub);
-            byte[] encKey = cipher.wrap(sKey);
-            decWrappedData[0] = encMsg;
-            decWrappedData[1] = encKey;
+            // Desciframos y desenvolvemos con el algoritmo de cifrado simetrico (RSA)
+            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            cipher.init(Cipher.UNWRAP_MODE, priv);
+            Key decKey = cipher.unwrap(data[1],"AES",Cipher.SECRET_KEY);
+
+            // Desciframos el mensaje con el algoritmo AES
+            cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE,decKey);
+            msgDes = cipher.doFinal(encMsg);
+
         } catch (Exception  ex) {
-            System.err.println("Ha succeït un error xifrant: " + ex);
-        }
-        return decWrappedData;
+        System.err.println("Ha succeït un error desxifrant: " + ex);
+    }
+        return msgDes;
     }
 }
