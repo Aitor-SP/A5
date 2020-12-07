@@ -89,7 +89,7 @@ public class Main {
 
         // 5
         byte[] texto1 ="prueba".getBytes();
-        System.out.println("Firma :"+ new String(Cifrar.signData(texto1,privateKey)));
+        System.out.println("Firma: "+ new String(Cifrar.signData(texto1,privateKey)));
 
         // 6
         byte[] firma = Cifrar.signData(texto1,privateKey);
@@ -100,9 +100,8 @@ public class Main {
         byte[] data = texto2.getBytes();
 
         byte[][] cifrado = Cifrar.encryptWrappedData(data,publicKey);
-        System.out.println("Texto cifrado :"+cifrado);
+        System.out.println("Texto cifrado: "+cifrado);
 
-
-        System.out.println("Texto descifrado :" + new String(Cifrar.decryptWrappedData(cifrado,privateKey)));
+        System.out.println("Texto descifrado: " + new String(Cifrar.decryptWrappedData(cifrado,privateKey)));
     }
 }
